@@ -19,7 +19,8 @@ class BATModel : public BCModel {
     private:
         TH1 *hSignal;
         TH1 *hData;
-        TH1 *hBackground;
+        std::vector<TH1 *> hBackgrounds;
+
 
     public:
 
@@ -33,9 +34,10 @@ class BATModel : public BCModel {
         double LogLikelihood(const std::vector<double> &parameters);
         // double LogAPrioriProbability(const std::vector<double> &parameters);
 
-        void SetBackground(const TH1 *h);
+        void AddBackground(const TH1 *h);
         void SetSignal(const TH1 *h);
         void SetData(const TH1 *h);
+
 };
 // ---------------------------------------------------------
 

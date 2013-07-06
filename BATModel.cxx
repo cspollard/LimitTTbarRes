@@ -28,7 +28,7 @@ BATModel::~BATModel() {
 
 // ---------------------------------------------------------
 void BATModel::DefineParameters() {
-    AddParameter("norm", 0, 500);
+    AddParameter("sig_norm", 0, 500);
     return;
 }
 
@@ -48,9 +48,8 @@ double BATModel::LogLikelihood(const std::vector<double> &parameters) {
     return ll;
 }
 
-void BATModel::SetBackground(const TH1 *h) {
-    delete hBackground;
-    hBackground = (TH1 *) h->Clone();
+void BATModel::AddBackground(const string &name, const TH1 *h, double min, double max) {
+    hBackgrounds.push_back((TH1 *) h->Clone);
 
     return;
 }
