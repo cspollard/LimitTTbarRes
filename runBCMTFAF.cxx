@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     m->SetPriorDelta("ttbar", hBkg->Integral());
 
     m->AddSystematic("ttbar_norm", 0, 10);
-    m->SetSystematicVariation("all", "ttbar", "ttbar_norm", 1, 1);
+    m->SetSystematicVariation("all", "ttbar", "ttbar_norm", 5, 5);
     m->SetPriorGauss("ttbar_norm", 0, 1);
 
     m->AddProcess("signal", 0, 10);
