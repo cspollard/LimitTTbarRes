@@ -37,32 +37,33 @@ int main(int argc, char *argv[]) {
 
     cout << "Number of signal events: " << hSig->Integral() << endl;
 
-    TH1D *hSigBkg = (TH1D *) hBkg->Clone();
-    hSigBkg->Add(hSig);
-    hSigBkg->Add(hSig);
-    hSigBkg->Add(hBkg);
-    hSigBkg->Add(hBkg);
-
     BCAux::SetStyle();
 
-    // create new BATModel object
+    // create new BCMTF object
     BCMTF *m = new BCMTF();
+
+    // only one channel
     m->AddChannel("all");
 
+    // force the nominal ttbar normalization (delta function)
     m->AddProcess("ttbar");
     m->SetTemplate("all", "ttbar", *hBkg);
     m->SetPriorDelta("ttbar", hBkg->Integral());
 
-    m->AddSystematic("ttbar_norm", 0, 10);
-    m->SetSystematicVariation("all", "ttbar", "ttbar_norm", 5, 5);
+    // let the ttbar normalization float by up to 10 in each direction
+    m->AddSystematic("ttbar_norm", -10, 10);
+
+    // let the variation be +/- 100% of the nominal normalization
+    m->SetSystematicVariation("all", "ttbar", "ttbar_norm", 1, 1);
     m->SetPriorGauss("ttbar_norm", 0, 1);
 
+    // add signal with flat prior
     m->AddProcess("signal", 0, 10);
     m->SetTemplate("all", "signal", *hSig);
     m->SetPriorConstant("signal");
 
-    // m->SetData("all", *hDat);
-    m->SetData("all", *hSigBkg);
+    // add data
+    m->SetData("all", *hDat);
 
     BCMTFAnalysisFacility *maf = new BCMTFAnalysisFacility(m);
     maf->SetLogLevel(BCLog::warning);
@@ -74,16 +75,6 @@ int main(int argc, char *argv[]) {
         cout << "parameter " << i << ": " << params[i] << endl;
 
     m->PrintStack("all", params);
-
-    /*
-    TFile *fout = new TFile("ensemble_tree.root", "recreate");
-    TTree *tens = maf->BuildEnsembles(params, 1000);
-    TTree *tsum = maf->PerformEnsembleTest(tens, 1000);
-
-    tens->Write();
-    tsum->Write();
-    fout->Close();
-    */
 
     return 0;
 }
